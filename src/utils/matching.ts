@@ -6,11 +6,15 @@ export const calculateHourMatch = (scores: Record<Aspect, number>): Hour => {
   let bestHour = HOURS_DATA[0];
   let maxScore = -Infinity;
 
+  // Find max user score to determine significance threshold
+  const maxUserScore = Math.max(...Object.values(scores), 1);
+  const SIGNIFICANCE_THRESHOLD = 0.2; // Aspect must be 20% of max score to count for synergy
+
   for (const hour of HOURS_DATA) {
     if (hour.aspects.length === 0) continue;
 
     let rawScore = 0;
-    let matchCount = 0;
+    let significantMatchCount = 0;
     
     hour.aspects.forEach((aspect, index) => {
       const userScore = scores[aspect] || 0;
@@ -23,15 +27,17 @@ export const calculateHourMatch = (scores: Record<Aspect, number>): Hour => {
       
       rawScore += userScore * weight;
       
-      if (userScore > 0) matchCount++;
+      // Only count for synergy if the score is significant relative to the user's best aspect
+      if (userScore >= maxUserScore * SIGNIFICANCE_THRESHOLD) {
+        significantMatchCount++;
+      }
     });
     
     // Synergy Bonus:
-    // If the user matches multiple aspects of the Hour, they are a better fit
-    // than someone who just has a high score in the primary aspect.
+    // If the user matches multiple aspects of the Hour SIGNIFICANTLY, they are a better fit.
     let synergyMultiplier = 1.0;
-    if (hour.aspects.length > 1 && matchCount > 1) {
-        synergyMultiplier = 1.1 + (matchCount * 0.05); 
+    if (hour.aspects.length > 1 && significantMatchCount > 1) {
+        synergyMultiplier = 1.1 + (significantMatchCount * 0.05); 
     }
 
     // Penalty:
@@ -42,9 +48,8 @@ export const calculateHourMatch = (scores: Record<Aspect, number>): Hour => {
     }
 
     // Normalization:
-    // We divide by a smaller factor than before to slightly favor complex Hours
-    // if the user actually matches their complexity.
-    const finalScore = (rawScore * synergyMultiplier) / Math.pow(hour.aspects.length, 0.3);
+    // Slightly increased penalty for complexity to favor pure matches when appropriate
+    const finalScore = (rawScore * synergyMultiplier) / Math.pow(hour.aspects.length, 0.35);
     
     if (finalScore > maxScore) {
       maxScore = finalScore;
