@@ -240,7 +240,7 @@ export const HOURS_DATA: Hour[] = [
   },
   {
     id: 'XXV',
-    name: '戴冠之孽 (The Crowned Growth)',
+    name: '戴冠之孳 (The Crowned Growth)',
     origin: '虚源',
     aspects: ['Grail', 'Winter'],
     gender: '阳性',

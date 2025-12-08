@@ -225,6 +225,17 @@ function App() {
             >
               <span>⭐ Star on GitHub</span>
             </a>
+            
+            {/* Busuanzi Statistics */}
+            <div className="flex items-center gap-4 mt-2 text-[10px] tracking-wider">
+              <span id="busuanzi_container_site_pv" style={{ display: 'none' }}>
+                访问量 <span id="busuanzi_value_site_pv" className="text-gold"></span>
+              </span>
+              <span className="text-gold/20">|</span>
+              <span id="busuanzi_container_site_uv" style={{ display: 'none' }}>
+                访客数 <span id="busuanzi_value_site_uv" className="text-gold"></span>
+              </span>
+            </div>
           </div>
         </footer>
       </div>
