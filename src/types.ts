@@ -33,3 +33,15 @@ export interface AspectScore {
   aspect: Aspect;
   score: number;
 }
+
+export interface HistoryRecord {
+  questionId: string;
+  questionTitle: string;
+  optionId: string;
+  optionText: string;
+  aspect: Aspect;
+  value: number;
+  flavorText: string;
+}
+
+export type Perspective = 'protagonist' | 'observer';

@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { questions } from '../data/questions';
-import type { Aspect, AspectScore } from '../types';
+import type { Question, Aspect, AspectScore, HistoryRecord, Option } from '../types';
 import { Eye, EyeOff, Undo2 } from 'lucide-react';
 import { useSound } from '../contexts/SoundContext';
 
 interface QuizProps {
-  onComplete: (scores: AspectScore[]) => void;
+  questions: Question[];
+  onComplete: (scores: AspectScore[], history: HistoryRecord[]) => void;
   onScoreUpdate?: (scores: Record<Aspect, number>) => void;
 }
 
-interface HistoryItem {
-  questionId: string;
-  aspect: Aspect;
-  value: number;
-}
-
-export const Quiz: React.FC<QuizProps> = ({ onComplete, onScoreUpdate }) => {
+export const Quiz: React.FC<QuizProps> = ({ questions, onComplete, onScoreUpdate }) => {
   const { playSound } = useSound();
   const [currentQuestionId, setCurrentQuestionId] = useState<string>(() => {
-    return localStorage.getItem('quiz_currentQuestionId') || 'origin';
+    // Check if the saved question ID actually exists in the current question set
+    const savedId = localStorage.getItem('quiz_currentQuestionId');
+    if (savedId && questions.some(q => q.id === savedId)) {
+        return savedId;
+    }
+    return questions[0].id;
   });
   const [scores, setScores] = useState<Record<Aspect, number>>(() => {
     const saved = localStorage.getItem('quiz_scores');
@@ -29,7 +28,7 @@ export const Quiz: React.FC<QuizProps> = ({ onComplete, onScoreUpdate }) => {
       'Secret Histories': 0
     };
   });
-  const [history, setHistory] = useState<HistoryItem[]>(() => {
+  const [history, setHistory] = useState<HistoryRecord[]>(() => {
     const saved = localStorage.getItem('quiz_history');
     return saved ? JSON.parse(saved) : [];
   });
@@ -56,28 +55,39 @@ export const Quiz: React.FC<QuizProps> = ({ onComplete, onScoreUpdate }) => {
       return <div>Loading...</div>;
   }
 
-  const handleOptionSelect = (aspect: Aspect, value: number, nextQuestionId?: string) => {
+  const handleOptionSelect = (option: Option) => {
     if (isTransitioning) return;
     playSound('click');
     setIsTransitioning(true);
-    proceedToNext(aspect, value, nextQuestionId);
+    proceedToNext(option);
   };
 
-  const proceedToNext = (aspect: Aspect, value: number, nextQuestionId?: string) => {
+  const proceedToNext = (option: Option) => {
     // Record history
-    setHistory(prev => [...prev, { questionId: currentQuestionId, aspect, value }]);
+    const newHistoryItem: HistoryRecord = {
+      questionId: currentQuestionId,
+      questionTitle: currentQuestion!.title,
+      optionId: option.id,
+      optionText: option.text,
+      aspect: option.aspect,
+      value: option.value,
+      flavorText: option.flavorText
+    };
+    
+    const newHistory = [...history, newHistoryItem];
+    setHistory(newHistory);
 
     // Update scores
-    const newScores = { ...scores, [aspect]: scores[aspect] + value };
+    const newScores = { ...scores, [option.aspect]: scores[option.aspect] + option.value };
     setScores(newScores);
     if (onScoreUpdate) onScoreUpdate(newScores);
 
     // Move to next question
     setDirection(1);
     
-    if (nextQuestionId && nextQuestionId !== 'end') {
+    if (option.nextQuestionId && option.nextQuestionId !== 'end') {
       setTimeout(() => {
-        setCurrentQuestionId(nextQuestionId);
+        setCurrentQuestionId(option.nextQuestionId!);
         setHoveredFlavor(null);
         setIsTransitioning(false);
       }, 200);
@@ -87,7 +97,7 @@ export const Quiz: React.FC<QuizProps> = ({ onComplete, onScoreUpdate }) => {
         aspect: key as Aspect,
         score: val
       }));
-      onComplete(finalScores);
+      onComplete(finalScores, newHistory);
     }
   };
 
@@ -224,7 +234,7 @@ export const Quiz: React.FC<QuizProps> = ({ onComplete, onScoreUpdate }) => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                     disabled={isLocked}
-                    onClick={() => !isLocked && handleOptionSelect(option.aspect, option.value, option.nextQuestionId)}
+                    onClick={() => !isLocked && handleOptionSelect(option)}
                     onMouseEnter={() => {
                       if (!isLocked) {
                         playSound('hover');

@@ -2,17 +2,20 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import html2canvas from 'html2canvas';
 import { QRCodeCanvas } from 'qrcode.react';
-import type { Aspect, AspectScore } from '../types';
+import type { Aspect, AspectScore, HistoryRecord } from '../types';
 import { calculateHourMatch, calculateJudgment } from '../utils/matching';
 import { CHARACTER_IMAGES } from '../data/characters';
 import { useSound } from '../contexts/SoundContext';
+import { BiographyModal } from './BiographyModal';
 import { 
-  RefreshCw, Share2, Download
+  RefreshCw, Share2, Download, BookOpen
 } from 'lucide-react';
 
 interface ResultsProps {
   scores: AspectScore[];
   onRestart: () => void;
+  quizMode?: 'menu' | 'occult' | 'reality';
+  history: HistoryRecord[];
 }
 
 const ASPECT_ICONS: Record<Aspect, string> = {
@@ -195,9 +198,10 @@ const AspectProgress: React.FC<{ scores: AspectScore[] }> = ({ scores }) => {
   );
 };
 
-export const Results: React.FC<ResultsProps> = ({ scores, onRestart }) => {
+export const Results: React.FC<ResultsProps> = ({ scores, onRestart, quizMode, history }) => {
   const { playSound } = useSound();
   const [activeTab, setActiveTab] = useState<'IDENTITY' | 'ANALYSIS' | 'SOUL'>('IDENTITY');
+  const [isBioModalOpen, setIsBioModalOpen] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const handleDownloadImage = async () => {
@@ -222,6 +226,10 @@ export const Results: React.FC<ResultsProps> = ({ scores, onRestart }) => {
             // Hide mobile tab navigation in screenshot
             const mobileTabs = clonedDoc.querySelector('.md\\:hidden.flex');
             if (mobileTabs) mobileTabs.remove();
+
+            // Hide noise overlay in screenshot to prevent artifacts
+            const noiseOverlay = clonedDoc.querySelector('.noise-overlay-bg');
+            if (noiseOverlay) noiseOverlay.remove();
 
             // Force single column layout for "Long Image" style
             const gridCols2 = clonedDoc.querySelectorAll('.lg\\:grid-cols-2');
@@ -305,7 +313,7 @@ export const Results: React.FC<ResultsProps> = ({ scores, onRestart }) => {
       {/* Capture Area */}
       <div ref={resultsRef} className="bg-onyx p-4 md:p-8 rounded-lg relative overflow-hidden">
         {/* Background Texture for Image */}
-        <div className="absolute inset-0 pointer-events-none opacity-10 mix-blend-overlay" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E")` }} />
+        <div className="absolute inset-0 pointer-events-none opacity-10 mix-blend-overlay noise-overlay-bg" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E")` }} />
         
         <div className="text-center mb-8 md:mb-12 relative z-10">
             <motion.h1 
@@ -316,10 +324,22 @@ export const Results: React.FC<ResultsProps> = ({ scores, onRestart }) => {
             >
             最终判决
             </motion.h1>
-            <p className="text-gold/50 font-decorative tracking-[0.5em] text-sm uppercase mb-4">
+            <p className="text-gold/50 font-decorative tracking-[0.5em] text-sm uppercase">
             THE VERDICT
             </p>
-            <div className="h-px w-24 bg-gold/50 mx-auto" />
+            
+            {quizMode === 'reality' && (
+                <motion.p 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-parchment/60 text-sm mt-4 italic font-body"
+                >
+                    在凡世的伪装下，你的灵魂属于……
+                </motion.p>
+            )}
+
+            <div className="h-px w-24 bg-gold/50 mx-auto mt-4" />
         </div>
 
         {/* Mobile Tab Navigation */}
@@ -497,6 +517,17 @@ export const Results: React.FC<ResultsProps> = ({ scores, onRestart }) => {
           保存结果
         </button>
 
+        {quizMode !== 'reality' && (
+          <button 
+            onClick={() => setIsBioModalOpen(true)}
+            onMouseEnter={() => playSound('hover')}
+            className="flex items-center justify-center gap-2 px-8 py-3 bg-gold/10 border border-gold/40 text-gold hover:bg-gold/20 transition-all duration-300 font-heading tracking-widest uppercase text-sm w-full md:w-auto"
+          >
+            <BookOpen size={16} />
+            书写命运
+          </button>
+        )}
+
         <button 
           className="flex items-center justify-center gap-2 px-8 py-3 bg-gold/10 border border-gold/40 text-gold hover:bg-gold/20 transition-all duration-300 font-heading tracking-widest uppercase text-sm w-full md:w-auto"
           onMouseEnter={() => playSound('hover')}
@@ -518,6 +549,15 @@ export const Results: React.FC<ResultsProps> = ({ scores, onRestart }) => {
           分享命运
         </button>
       </motion.div>
+
+      <BiographyModal
+        isOpen={isBioModalOpen}
+        onClose={() => setIsBioModalOpen(false)}
+        history={history}
+        finalResultTitle={mainJudgment.title}
+        dominantAspect={primaryAspect}
+        matchedHourName={matchedHour.name}
+      />
     </motion.div>
   );
 };

@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'react';
 import { Quiz } from './components/Quiz';
 import { Results } from './components/Results';
-import type { Aspect, AspectScore } from './types';
+import type { Aspect, AspectScore, HistoryRecord } from './types';
 import { getHighestAspect } from './utils/matching';
 import { useSound } from './contexts/SoundContext';
-import { Volume2, VolumeX } from 'lucide-react';
+import { Volume2, VolumeX, Sparkles, BrainCircuit } from 'lucide-react';
+import { questions as OCCULT_QUESTIONS } from './data/questions';
+import { REALITY_QUESTIONS } from './data/reality_questions';
+
+type QuizMode = 'menu' | 'occult' | 'reality';
 
 function App() {
   const { playSound, isMuted, toggleMute } = useSound();
   const [currentAspect, setCurrentAspect] = useState<Aspect | null>(null);
+  const [quizMode, setQuizMode] = useState<QuizMode>(() => {
+    const saved = localStorage.getItem('app_quizMode');
+    return (saved ? JSON.parse(saved) : 'menu') as QuizMode;
+  });
   const [hasStarted, setHasStarted] = useState(() => {
     const saved = localStorage.getItem('app_hasStarted');
     return saved ? JSON.parse(saved) : false;
@@ -21,6 +29,14 @@ function App() {
     const saved = localStorage.getItem('app_finalScores');
     return saved ? JSON.parse(saved) : [];
   });
+  const [history, setHistory] = useState<HistoryRecord[]>(() => {
+    const saved = localStorage.getItem('app_history');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('app_quizMode', JSON.stringify(quizMode));
+  }, [quizMode]);
 
   useEffect(() => {
     localStorage.setItem('app_hasStarted', JSON.stringify(hasStarted));
@@ -34,6 +50,10 @@ function App() {
     localStorage.setItem('app_finalScores', JSON.stringify(finalScores));
   }, [finalScores]);
 
+  useEffect(() => {
+    localStorage.setItem('app_history', JSON.stringify(history));
+  }, [history]);
+
   // Try to play ambient sound on mount if started, or when starting
   useEffect(() => {
     if (hasStarted && !isFinished) {
@@ -41,14 +61,16 @@ function App() {
     }
   }, [hasStarted, isFinished]);
 
-  const handleStart = () => {
+  const handleStart = (mode: QuizMode) => {
     playSound('click');
     playSound('ambient');
+    setQuizMode(mode);
     setHasStarted(true);
   };
 
-  const handleComplete = (scores: AspectScore[]) => {
+  const handleComplete = (scores: AspectScore[], history: HistoryRecord[]) => {
     setFinalScores(scores);
+    setHistory(history);
     setIsFinished(true);
     playSound('reveal');
     // Clear quiz progress when finished
@@ -61,12 +83,15 @@ function App() {
     playSound('click');
     setHasStarted(false);
     setIsFinished(false);
+    setQuizMode('menu');
     setFinalScores([]);
+    setHistory([]);
     setCurrentAspect(null);
     // Clear all app state
     localStorage.removeItem('app_hasStarted');
     localStorage.removeItem('app_isFinished');
     localStorage.removeItem('app_finalScores');
+    localStorage.removeItem('app_history');
     localStorage.removeItem('quiz_currentQuestionId');
     localStorage.removeItem('quiz_scores');
     localStorage.removeItem('quiz_history');
@@ -139,29 +164,51 @@ function App() {
         )}
         
         {!hasStarted ? (
-          <div className="card-frame p-12 max-w-lg w-full mx-auto transform transition-all duration-500 hover:scale-[1.02]">
-            <div className="mb-8 space-y-4">
-              <p className="text-xl text-parchment/90 font-body italic leading-relaxed">
-                “我升得越高，见得越多。”
-              </p>
-              <p className="text-sm text-ash font-decorative tracking-widest opacity-60">
-                THE HIGHER I RISE, THE MORE I SEE
-              </p>
-            </div>
-            
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl px-4">
+            {/* Mode A: Occult */}
             <button 
-              onClick={handleStart} 
-              onMouseEnter={() => playSound('hover')}
-              className="btn-primary w-full group"
-            >
-              <span className="relative z-10 group-hover:text-void transition-colors duration-300">开始仪式</span>
-              <div className="absolute inset-0 bg-gold transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                 className="card-frame p-8 flex flex-col items-center text-center transform transition-all duration-500 hover:scale-[1.02] group cursor-pointer bg-onyx/40 hover:bg-onyx/60"
+                 onClick={() => handleStart('occult')}
+                 onMouseEnter={() => playSound('hover')}>
+                <div className="mb-6 text-gold/80 group-hover:text-gold transition-colors">
+                    <Sparkles size={48} strokeWidth={1} />
+                </div>
+                <h3 className="text-2xl text-gold font-heading mb-2">飞升之路</h3>
+                <p className="text-xs text-gold/40 font-decorative tracking-widest uppercase mb-4">The Path of Ascension</p>
+                <p className="text-parchment/80 text-sm leading-relaxed mb-6 flex-1">
+                    扮演一名寻求飞升的教主，在梦境与仪式中做出抉择。适合熟悉《密教模拟器》背景的访客。
+                </p>
+                <div className="w-full py-2 border border-gold/30 text-gold/60 text-sm font-heading tracking-widest uppercase group-hover:bg-gold group-hover:text-void transition-all duration-300">
+                    进入漫宿
+                </div>
+            </button>
+
+            {/* Mode B: Reality */}
+            <button 
+                 className="card-frame p-8 flex flex-col items-center text-center transform transition-all duration-500 hover:scale-[1.02] group cursor-pointer bg-onyx/40 hover:bg-onyx/60"
+                 onClick={() => handleStart('reality')}
+                 onMouseEnter={() => playSound('hover')}>
+                <div className="mb-6 text-gold/80 group-hover:text-gold transition-colors">
+                    <BrainCircuit size={48} strokeWidth={1} />
+                </div>
+                <h3 className="text-2xl text-gold font-heading mb-2">现世之镜</h3>
+                <p className="text-xs text-gold/40 font-decorative tracking-widest uppercase mb-4">The Mirror of the World</p>
+                <p className="text-parchment/80 text-sm leading-relaxed mb-6 flex-1">
+                    基于现代生活情境的心理测试，探索你灵魂深处的原型。适合希望了解真实自我的访客。
+                </p>
+                <div className="w-full py-2 border border-gold/30 text-gold/60 text-sm font-heading tracking-widest uppercase group-hover:bg-gold group-hover:text-void transition-all duration-300">
+                    凝视倒影
+                </div>
             </button>
           </div>
         ) : !isFinished ? (
-          <Quiz onComplete={handleComplete} onScoreUpdate={handleScoreUpdate} />
+          <Quiz 
+            questions={quizMode === 'reality' ? REALITY_QUESTIONS : OCCULT_QUESTIONS}
+            onComplete={handleComplete} 
+            onScoreUpdate={handleScoreUpdate} 
+          />
         ) : (
-          <Results scores={finalScores} onRestart={handleRestart} />
+          <Results scores={finalScores} onRestart={handleRestart} quizMode={quizMode} history={history} />
         )}
 
         <footer className="mt-16 text-ash/40 text-xs font-decorative tracking-widest flex flex-col items-center gap-2">
