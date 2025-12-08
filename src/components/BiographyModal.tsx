@@ -136,9 +136,25 @@ export const BiographyModal: React.FC<BiographyModalProps> = ({
               
               {/* Mobile Settings Toggle */}
               <div className="md:hidden flex items-center justify-between p-4 border-b border-gold/20 bg-void/40 shrink-0">
-                 <span className="text-gold/60 text-xs font-heading tracking-widest uppercase">
-                   {isGenerating ? '正在书写命运...' : '配置与生成'}
-                 </span>
+                 <div className="flex items-center gap-3">
+                   <span className="text-gold/60 text-xs font-heading tracking-widest uppercase">
+                     {isGenerating ? '正在书写命运...' : '配置与生成'}
+                   </span>
+                   {biography && !isGenerating && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCopyStory();
+                        }}
+                        className="flex items-center gap-1.5 px-2 py-1 rounded border border-gold/20 bg-gold/5 text-gold/80 hover:bg-gold/10 hover:text-gold transition-colors"
+                      >
+                        <Copy size={12} />
+                        <span className="text-[10px] font-heading tracking-wider uppercase">
+                          {showStoryCopy ? '已复制' : '复制全文'}
+                        </span>
+                      </button>
+                    )}
+                 </div>
                  <button 
                    onClick={() => setIsMobileSettingsOpen(!isMobileSettingsOpen)}
                    className="text-gold hover:text-white transition-colors flex items-center gap-2"

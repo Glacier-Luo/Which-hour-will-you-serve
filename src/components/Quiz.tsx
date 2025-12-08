@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Question, Aspect, AspectScore, HistoryRecord, Option } from '../types';
-import { Eye, EyeOff, Undo2 } from 'lucide-react';
+import { Eye, EyeOff, Undo2, Home } from 'lucide-react';
 import { useSound } from '../contexts/SoundContext';
 
 interface QuizProps {
   questions: Question[];
   onComplete: (scores: AspectScore[], history: HistoryRecord[]) => void;
   onScoreUpdate?: (scores: Record<Aspect, number>) => void;
+  onExit?: () => void;
 }
 
-export const Quiz: React.FC<QuizProps> = ({ questions, onComplete, onScoreUpdate }) => {
+export const Quiz: React.FC<QuizProps> = ({ questions, onComplete, onScoreUpdate, onExit }) => {
   const { playSound } = useSound();
   const [currentQuestionId, setCurrentQuestionId] = useState<string>(() => {
     // Check if the saved question ID actually exists in the current question set
@@ -160,13 +161,27 @@ export const Quiz: React.FC<QuizProps> = ({ questions, onComplete, onScoreUpdate
             <Undo2 size={24} />
           </button>
           
-          <button 
-            onClick={() => setShowAspects(!showAspects)}
-            className="text-gold/50 hover:text-gold transition-colors p-2"
-            title="Toggle Spirit Vision"
-          >
-            {showAspects ? <Eye size={20} /> : <EyeOff size={20} />}
-          </button>
+          <div className="flex items-center gap-2">
+            {onExit && (
+              <button 
+                onClick={() => {
+                  playSound('click');
+                  onExit();
+                }}
+                className="text-gold/50 hover:text-gold transition-colors p-2"
+                title="Return to Home"
+              >
+                <Home size={20} />
+              </button>
+            )}
+            <button 
+              onClick={() => setShowAspects(!showAspects)}
+              className="text-gold/50 hover:text-gold transition-colors p-2"
+              title="Toggle Spirit Vision"
+            >
+              {showAspects ? <Eye size={20} /> : <EyeOff size={20} />}
+            </button>
+          </div>
         </div>
         
         {/* Mysterious Progress Bar */}

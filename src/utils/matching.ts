@@ -1,6 +1,10 @@
 import type { Aspect } from '../types';
 import { type Hour, HOURS_DATA } from '../data/hours';
-import { ASPECT_JUDGMENTS, SPECIAL_COMBINATIONS, type Judgment } from '../data/results';
+import { 
+  ASPECT_JUDGMENTS, 
+  SPECIAL_COMBINATIONS, 
+  type Judgment 
+} from '../data/results';
 
 export const calculateHourMatch = (scores: Record<Aspect, number>): Hour => {
   let bestHour = HOURS_DATA[0];
@@ -74,20 +78,34 @@ export const getHighestAspect = (scores: Record<Aspect, number>): Aspect => {
 };
 
 export const calculateJudgment = (scores: Record<Aspect, number>): Judgment => {
-    const sortedAspects = Object.entries(scores)
-        .sort(([, scoreA], [, scoreB]) => scoreB - scoreA)
-        .map(([aspect]) => aspect as Aspect);
+    const sortedEntries = Object.entries(scores)
+        .sort(([, scoreA], [, scoreB]) => scoreB - scoreA);
 
-    const primary = sortedAspects[0];
-    const secondary = sortedAspects[1];
+    const [primaryAspect] = sortedEntries[0];
+    const [secondaryAspect, secondaryScore] = sortedEntries[1] || [null, 0];
+    const [, tertiaryScore] = sortedEntries[2] || [null, 0];
+
+    // Always use ASPECT_JUDGMENTS (Occult style) as requested, even for Reality mode
+    const judgments = ASPECT_JUDGMENTS;
+    const combinations = SPECIAL_COMBINATIONS;
+
+    // Threshold for special combination
+    // If the 2nd place is significantly ahead of the 3rd place (>= 3 points),
+    // it implies a strong dual nature.
+    const SEPARATION_THRESHOLD = 3; 
 
     // Check for special combination
-    if (secondary) {
-        const comboKey = `${primary}+${secondary}`;
-        if (SPECIAL_COMBINATIONS[comboKey]) {
-            return SPECIAL_COMBINATIONS[comboKey];
+    if (secondaryAspect && (secondaryScore - tertiaryScore >= SEPARATION_THRESHOLD)) {
+        const comboKey1 = `${primaryAspect}+${secondaryAspect}`;
+        const comboKey2 = `${secondaryAspect}+${primaryAspect}`;
+        
+        if (combinations[comboKey1]) {
+            return combinations[comboKey1];
+        }
+        if (combinations[comboKey2]) {
+            return combinations[comboKey2];
         }
     }
 
-    return ASPECT_JUDGMENTS[primary];
+    return judgments[primaryAspect as Aspect];
 };

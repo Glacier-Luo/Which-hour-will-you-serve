@@ -191,3 +191,105 @@ export const SPECIAL_COMBINATIONS: Record<string, Judgment> = {
     tarotCard: 'V - THE HIEROPHANT'
   }
 };
+
+export const REALITY_JUDGMENTS: Record<Aspect, Judgment> = {
+  'Lantern': {
+    title: '清醒的智者 (The Lucid Sage)',
+    description: '在喧嚣的现代生活中，你是一座孤岛般的灯塔。你拒绝被情绪裹挟，拒绝盲从大众。你用逻辑的手术刀解剖每一个问题，追求绝对的理性与真相。对你而言，世界是一道复杂的谜题，而你致力于找到那个唯一的解。你的冷静常被误解为冷漠，但你知道，唯有清醒，才能自由。',
+    motto: '“在混沌的洪流中，理智是唯一的方舟。”',
+    tarotCard: 'IX - THE HERMIT'
+  },
+  'Forge': {
+    title: '不息的工匠 (The Restless Artisan)',
+    description: '你无法忍受停滞。你的生命力体现在“改变”上——改变环境、改变规则、改变自己。你是一个实干家，相信行动胜过一切空谈。无论是事业上的野心，还是生活中的创造，你总是那个推动齿轮转动的人。你燃烧着自己，也点燃了周围的世界。',
+    motto: '“世界不会自己变好，除非我们亲手去锻造它。”',
+    tarotCard: 'I - THE MAGICIAN'
+  },
+  'Edge': {
+    title: '无畏的先锋 (The Fearless Vanguard)',
+    description: '你将生活视为一场竞技场。挑战不会让你退缩，只会让你兴奋。你拥有敏锐的直觉和强大的执行力，善于在冲突中寻找机会。你并不一定好战，但你绝不畏战。在逆境中，你是那个最先站出来，也是最后倒下的人。你的锋芒是你最好的铠甲。',
+    motto: '“风暴来临时，我便是风暴。”',
+    tarotCard: 'VII - THE CHARIOT'
+  },
+  'Winter': {
+    title: '沉静的隐士 (The Quiet Hermit)',
+    description: '在这个过度喧哗的时代，你懂得沉默的力量。你并不厌世，只是更享受独处的宁静。你拥有一种超然的气质，能够接受失去、结束和不完美。你像冬日的雪一样，掩盖了世界的嘈杂，在内心深处构建了一个纯净、安宁的避难所。',
+    motto: '“万物终将归于寂静，而我在寂静中听见真理。”',
+    tarotCard: 'II - THE HIGH PRIESTESS'
+  },
+  'Heart': {
+    title: '坚韧的守护者 (The Resilient Guardian)',
+    description: '你是这个世界的基石。你拥有强大的包容力和生命力，能够消化痛苦，传递温暖。你重视连接，珍视关系，是家人和朋友最坚实的后盾。你的力量不在于进攻，而在于守护——守护那些微小的幸福，守护生活的常态，守护人性的光辉。',
+    motto: '“只要心跳还在，希望就在。”',
+    tarotCard: 'III - THE EMPRESS'
+  },
+  'Grail': {
+    title: '热烈的体验者 (The Passionate Experiencer)',
+    description: '你拒绝平庸。对你来说，活着就是为了体验——体验极致的快乐，体验深刻的痛苦，体验爱与被爱。你是感官的信徒，追求美、艺术和一切能让灵魂颤栗的事物。你像一杯浓烈的酒，让周围的人也随之沉醉。你活在当下，活得热烈而鲜活。',
+    motto: '“若不极致地燃烧，便如同从未活过。”',
+    tarotCard: 'XV - THE DEVIL'
+  },
+  'Moth': {
+    title: '自由的流浪者 (The Free Wanderer)',
+    description: '你是一阵抓不住的风。你拒绝被标签定义，拒绝被规则束缚。你的思维跳跃，充满了天马行空的想象力。你总是渴望远方，渴望变化，渴望成为不同的自己。在别人眼中你可能有些疯狂或不切实际，但你知道，那是你灵魂在飞翔。',
+    motto: '“不要问我去向何方，我的归宿在风中。”',
+    tarotCard: '0 - THE FOOL'
+  },
+  'Knock': {
+    title: '敏锐的破局者 (The Keen Breaker)',
+    description: '你拥有一种独特的洞察力，总能看到别人忽视的“门”。你擅长寻找捷径，打破常规，解决那些看似无解的问题。你游走在规则的边缘，连接着不同的圈子和资源。对你来说，没有绝对的墙，只有还没找到的钥匙。',
+    motto: '“没有死局，只有未被发现的出口。”',
+    tarotCard: 'X - WHEEL OF FORTUNE'
+  },
+  'Secret Histories': {
+    title: '深邃的记录者 (The Profound Chronicler)',
+    description: '你是一个怀旧的人，也是一个博学的人。你珍视记忆，无论是自己的还是集体的。你喜欢探究事物的来龙去脉，从历史中汲取智慧。在这个快节奏的遗忘时代，你是那个默默拾起碎片、拼凑真相的人。你的内心是一座图书馆，藏着无数的故事。',
+    motto: '“我们由记忆构成，遗忘即是死亡。”',
+    tarotCard: 'V - THE HIEROPHANT'
+  }
+};
+
+export const REALITY_COMBINATIONS: Record<string, Judgment> = {
+  'Lantern+Winter': {
+    title: '冷峻的观察者 (The Cold Observer)',
+    description: '理智与静默的结合。你像一台精密的仪器，冷静地观察着这个世界，不带偏见，也不带情感。你洞悉人性，却保持距离。',
+    motto: '“旁观者清。”',
+    tarotCard: 'IV - THE EMPEROR'
+  },
+  'Lantern+Forge': {
+    title: '理性的变革者 (The Rational Reformer)',
+    description: '你拥有清晰的蓝图和强大的执行力。你不仅知道什么是对的，还有能力去实现它。你是推动社会进步的中坚力量。',
+    motto: '“知行合一。”',
+    tarotCard: 'VIII - STRENGTH'
+  },
+  'Forge+Edge': {
+    title: '野心的征服者 (The Ambitious Conqueror)',
+    description: '行动力与竞争心的完美融合。你在事业上势不可挡，为了目标可以排除万难。你是天生的领袖和赢家。',
+    motto: '“胜者为王。”',
+    tarotCard: 'IV - THE EMPEROR'
+  },
+  'Heart+Grail': {
+    title: '深情的伴侣 (The Devoted Lover)',
+    description: '你拥有丰富的情感和无尽的爱意。你懂得如何去爱，也渴望被爱。你是最温柔的情人，也是最忠诚的朋友。',
+    motto: '“爱是万物的答案。”',
+    tarotCard: 'VI - THE LOVERS'
+  },
+  'Moth+Knock': {
+    title: '灵动的投机者 (The Agile Speculator)',
+    description: '你思维敏捷，身手灵活。你总能在混乱中找到机会，在危机中全身而退。你是生活中的魔术师。',
+    motto: '“变幻莫测。”',
+    tarotCard: 'I - THE MAGICIAN'
+  },
+  'Secret Histories+Lantern': {
+    title: '博学的导师 (The Erudite Mentor)',
+    description: '你知识渊博，见解独到。你乐于分享你的智慧，指引他人走出迷茫。你是照亮他人前路的灯塔。',
+    motto: '“薪火相传。”',
+    tarotCard: 'IX - THE HERMIT'
+  },
+  'Winter+Edge': {
+    title: '冷酷的执行者 (The Ruthless Executor)',
+    description: '你话不多，但行事果决。在关键时刻，你能摒弃情感的干扰，做出最艰难的决定。你是最可靠的利刃。',
+    motto: '“沉默是金，行动是铁。”',
+    tarotCard: 'XI - JUSTICE'
+  }
+};

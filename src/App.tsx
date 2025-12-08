@@ -205,7 +205,8 @@ function App() {
           <Quiz 
             questions={quizMode === 'reality' ? REALITY_QUESTIONS : OCCULT_QUESTIONS}
             onComplete={handleComplete} 
-            onScoreUpdate={handleScoreUpdate} 
+            onScoreUpdate={handleScoreUpdate}
+            onExit={handleRestart}
           />
         ) : (
           <Results scores={finalScores} onRestart={handleRestart} quizMode={quizMode} history={history} />
