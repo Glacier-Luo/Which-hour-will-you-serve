@@ -227,25 +227,18 @@ function App() {
             </a>
             
             {/* Busuanzi Statistics */}
-            <div className="flex flex-col items-center gap-1 mt-2 text-[10px] tracking-wider text-gold/40">
-              <div className="flex items-center gap-3">
-                <span id="busuanzi_container_site_pv" style={{ display: 'none' }}>
-                  总访问 <span id="busuanzi_site_pv" className="text-gold"></span>
-                </span>
-                <span>|</span>
-                <span id="busuanzi_container_site_uv" style={{ display: 'none' }}>
-                  总访客 <span id="busuanzi_site_uv" className="text-gold"></span>
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span id="busuanzi_container_today_pv" style={{ display: 'none' }}>
-                  今日访问 <span id="busuanzi_today_pv" className="text-gold"></span>
-                </span>
-                <span>|</span>
-                <span id="busuanzi_container_today_uv" style={{ display: 'none' }}>
-                  今日访客 <span id="busuanzi_today_uv" className="text-gold"></span>
-                </span>
-              </div>
+            <div className="flex items-center gap-4 mt-2 text-[10px] tracking-wider">
+              <span id="busuanzi_container_site_pv" style={{ display: 'none' }}>
+                总访问 <span id="busuanzi_value_site_pv" className="text-gold"></span>
+              </span>
+              <span className="text-gold/20">|</span>
+              <span id="busuanzi_container_site_uv" style={{ display: 'none' }}>
+                总访客 <span id="busuanzi_value_site_uv" className="text-gold"></span>
+              </span>
+              <span className="text-gold/20">|</span>
+              <span id="busuanzi_container_page_pv" style={{ display: 'none' }}>
+                本页 <span id="busuanzi_value_page_pv" className="text-gold"></span>
+              </span>
             </div>
           </div>
         </footer>
