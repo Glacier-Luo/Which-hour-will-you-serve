@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Quiz } from './components/Quiz';
 import { Results } from './components/Results';
+import { SupportModal } from './components/SupportModal';
 import type { Aspect, AspectScore, HistoryRecord } from './types';
 import { getHighestAspect } from './utils/matching';
 import { useSound } from './contexts/SoundContext';
@@ -33,6 +34,34 @@ function App() {
     const saved = localStorage.getItem('app_history');
     return saved ? JSON.parse(saved) : [];
   });
+  const [showSupportModal, setShowSupportModal] = useState(false);
+
+  useEffect(() => {
+    // Visit count logic
+    const visitCount = parseInt(localStorage.getItem('app_visit_count') || '0');
+    const hasShownSupport = localStorage.getItem('app_has_shown_support') === 'true';
+    
+    // Increment visit count on mount (once per session/refresh)
+    // To avoid incrementing on strict mode double render, we could use a ref, but for simple logic this is fine
+    // Or better, check if we already incremented this session? No, user requirement is "multiple visits".
+    // Let's just increment.
+    const newCount = visitCount + 1;
+    localStorage.setItem('app_visit_count', newCount.toString());
+
+    // Show modal if visits > 2 and haven't shown yet
+    if (newCount > 2 && !hasShownSupport) {
+        // Delay slightly to not be intrusive immediately
+        const timer = setTimeout(() => {
+            setShowSupportModal(true);
+        }, 2000);
+        return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleCloseSupportModal = () => {
+    setShowSupportModal(false);
+    localStorage.setItem('app_has_shown_support', 'true');
+  };
 
   useEffect(() => {
     localStorage.setItem('app_quizMode', JSON.stringify(quizMode));
@@ -256,6 +285,11 @@ function App() {
           </div>
         </footer>
       </div>
+
+      <SupportModal 
+        isOpen={showSupportModal} 
+        onClose={handleCloseSupportModal} 
+      />
     </div>
   );
 }
