@@ -95,6 +95,8 @@ function App() {
     localStorage.removeItem('quiz_currentQuestionId');
     localStorage.removeItem('quiz_scores');
     localStorage.removeItem('quiz_history');
+    localStorage.removeItem('adventure_gameState');
+    localStorage.removeItem('adventure_gameStarted');
   };
 
   const handleScoreUpdate = (scores: Record<Aspect, number>) => {
@@ -124,13 +126,15 @@ function App() {
       <div className="noise-overlay"></div>
 
       {/* Sound Control */}
-      <button 
-        onClick={toggleMute}
-        className="fixed top-4 right-4 z-50 p-2 text-gold/50 hover:text-gold transition-colors border border-gold/20 rounded-full bg-onyx/50 backdrop-blur-sm"
-        title={isMuted ? "Unmute" : "Mute"}
-      >
-        {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
-      </button>
+      {!hasStarted && (
+        <button 
+            onClick={toggleMute}
+            className="fixed top-4 right-4 z-50 p-2 text-gold/50 hover:text-gold transition-colors border border-gold/20 rounded-full bg-onyx/50 backdrop-blur-sm"
+            title={isMuted ? "Unmute" : "Mute"}
+        >
+            {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+        </button>
+      )}
 
       {/* Background decoration */}
       <div className={`absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] transition-all duration-1000 ${getBackgroundStyle(currentAspect)}`}></div>
@@ -201,15 +205,24 @@ function App() {
                 </div>
             </button>
           </div>
-        ) : !isFinished ? (
-          <Quiz 
-            questions={quizMode === 'reality' ? REALITY_QUESTIONS : OCCULT_QUESTIONS}
-            onComplete={handleComplete} 
-            onScoreUpdate={handleScoreUpdate}
-            onExit={handleRestart}
-          />
         ) : (
-          <Results scores={finalScores} onRestart={handleRestart} quizMode={quizMode} history={history} />
+          <>
+            {!isFinished ? (
+              <Quiz 
+                questions={quizMode === 'reality' ? REALITY_QUESTIONS : OCCULT_QUESTIONS}
+                onComplete={handleComplete} 
+                onScoreUpdate={handleScoreUpdate}
+                onExit={handleRestart}
+              />
+            ) : (
+              <Results 
+                scores={finalScores} 
+                onRestart={handleRestart} 
+                quizMode={quizMode as 'occult' | 'reality'} 
+                history={history} 
+              />
+            )}
+          </>
         )}
 
         <footer className="mt-16 text-ash/40 text-xs font-decorative tracking-widest flex flex-col items-center gap-2">

@@ -22,7 +22,7 @@ export const BiographyModal: React.FC<BiographyModalProps> = ({
   dominantAspect,
   matchedHourName
 }) => {
-  const [apiKey, setApiKey] = useState('sk-cf51ba1983404d40b60fc3d6cf37135e');
+  const [apiKey, setApiKey] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [biography, setBiography] = useState('');
   const [reasoning, setReasoning] = useState('');
@@ -56,10 +56,10 @@ export const BiographyModal: React.FC<BiographyModalProps> = ({
 
     // Check quota warning
     const count = parseInt(localStorage.getItem('biography_gen_count') || '0');
-    if (count >= 1 && !showQuotaWarning && apiKey === 'sk-cf51ba1983404d40b60fc3d6cf37135e') {
-        setShowQuotaWarning(true);
-        return;
-    }
+    // if (count >= 1 && !showQuotaWarning && apiKey === 'sk-cf51ba1983404d40b60fc3d6cf37135e') {
+    //     setShowQuotaWarning(true);
+    //     return;
+    // }
 
     setIsGenerating(true);
     setIsMobileSettingsOpen(false); // Auto-collapse settings on mobile when generation starts
@@ -260,6 +260,9 @@ export const BiographyModal: React.FC<BiographyModalProps> = ({
                   <label className="block text-gold/80 text-sm font-heading tracking-wide">
                     DeepSeek API Key
                   </label>
+                  <p className="text-xs text-red-300/80 mb-2">
+                    作者的额度已经用完啦，希望大家使用自己的key捏
+                  </p>
                   <input
                     type="password"
                     value={apiKey}

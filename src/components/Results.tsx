@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import html2canvas from 'html2canvas';
 import { QRCodeCanvas } from 'qrcode.react';
 import type { Aspect, AspectScore, HistoryRecord } from '../types';
@@ -28,6 +28,18 @@ const ASPECT_ICONS: Record<Aspect, string> = {
   'Moth': import.meta.env.BASE_URL + 'images/icons/de.moth.png',
   'Knock': import.meta.env.BASE_URL + 'images/icons/knock.png',
   'Secret Histories': import.meta.env.BASE_URL + 'images/icons/Secrethistories.png'
+};
+
+const ASPECT_DESCRIPTIONS: Record<Aspect, { title: string; desc: string; motto: string }> = {
+  'Lantern': { title: '灯 (Lantern)', desc: '理性、光辉、无慈悲。它代表着绝对的理性与揭示真相的力量。', motto: '“仁慈，”守夜人道，“仅能在影中觅得。”' },
+  'Forge': { title: '铸 (Forge)', desc: '创造、改变、火、破坏。它通过破坏旧有的形态来创造新的形态。', motto: '“火是严冬，却是带有温度。火是暖春，却会耗尽一切。”' },
+  'Edge': { title: '刃 (Edge)', desc: '斗争、冲突、痛苦。它不仅仅是暴力，它是冲突的本质。', motto: '每一个小时都是一场战斗。' },
+  'Winter': { title: '冬 (Winter)', desc: '寂静、结局、死亡。它代表着死亡的宁静、色彩的消退和声音的止息。', motto: '寂静如约而至。' },
+  'Heart': { title: '心 (Heart)', desc: '保护、生命、存续。它是保护者，也是永不停歇的舞者。', motto: '“为了保护我们所知世界的表皮，不息之心无尽地搏动着。”' },
+  'Grail': { title: '杯 (Grail)', desc: '欲望、诱惑、出生。它代表着永不满足的饥饿感。', motto: '不仅是血，更是渴求。' },
+  'Moth': { title: '蛾 (Moth)', desc: '混乱、自然、蜕皮。它是剪刀，剪断理性的束缚。', motto: '“in gi rum imus noc te et con sumi **喀嚓喀嚓喀嚓**”' },
+  'Knock': { title: '启 (Knock)', desc: '开启、召唤、伤口。每一扇门都是一个伤口。', motto: '每一扇门都是一个伤口。' },
+  'Secret Histories': { title: '秘史 (Secret Histories)', desc: '知识、矛盾、多种可能性。世界曾是怎样，或可能是怎样。', motto: '世界曾是怎样，或可能是怎样。' }
 };
 
 const HourCard: React.FC<{ hour: any }> = ({ hour }) => {
@@ -95,6 +107,21 @@ const HourCard: React.FC<{ hour: any }> = ({ hour }) => {
           {/* Hover Glow Effect */}
           <div className="absolute inset-0 bg-gradient-to-tr from-gold/0 via-gold/0 to-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10" />
           
+          {/* Wiki Link Button */}
+          {hour.wikiUrl && (
+            <a 
+                href={hour.wikiUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="absolute bottom-4 right-4 z-40 flex items-center gap-2 px-3 py-1.5 bg-onyx/90 rounded-full border border-gold/30 text-gold/60 hover:text-gold hover:border-gold hover:bg-onyx transition-all duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:translate-y-2 md:group-hover:translate-y-0"
+                title="查看 Wiki"
+                onClick={(e) => e.stopPropagation()}
+            >
+                <span className="text-[10px] font-heading tracking-wider uppercase">Wiki</span>
+                <BookOpen size={12} />
+            </a>
+          )}
+
           {/* Particle Effects (Simple CSS) */}
           <div className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-1000">
              <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-gold rounded-full animate-ping" style={{ animationDuration: '2s' }} />
@@ -160,9 +187,10 @@ const CharacterCard: React.FC<{ aspect: Aspect; image: string; title: string }> 
 
 const AspectProgress: React.FC<{ scores: AspectScore[] }> = ({ scores }) => {
   const maxScore = Math.max(...scores.map(s => s.score), 1);
+  const [hoveredAspect, setHoveredAspect] = useState<Aspect | null>(null);
   
   return (
-    <div className="space-y-5 w-full max-w-md mx-auto px-4">
+    <div className="space-y-5 w-full max-w-md mx-auto px-4 relative">
       {scores.map((score, index) => {
         const iconPath = ASPECT_ICONS[score.aspect];
         const percentage = (score.score / maxScore) * 100;
@@ -173,7 +201,10 @@ const AspectProgress: React.FC<{ scores: AspectScore[] }> = ({ scores }) => {
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.8 + index * 0.1 }}
-            className="flex items-center gap-4 group"
+            onMouseEnter={() => setHoveredAspect(score.aspect)}
+            onMouseLeave={() => setHoveredAspect(null)}
+            onClick={() => setHoveredAspect(hoveredAspect === score.aspect ? null : score.aspect)}
+            className="flex items-center gap-4 group cursor-pointer relative"
           >
             <div className="w-8 flex justify-center text-gold/70 group-hover:text-gold transition-colors duration-300" title={score.aspect}>
               <img src={iconPath} alt={score.aspect} className="w-6 h-6 drop-shadow-md" />
@@ -194,6 +225,48 @@ const AspectProgress: React.FC<{ scores: AspectScore[] }> = ({ scores }) => {
           </motion.div>
         );
       })}
+
+      {/* Fixed Info Panel */}
+      <div className="mt-8 min-h-[120px] p-4 border border-gold/20 bg-onyx/50 rounded-sm relative overflow-hidden transition-all duration-300">
+        <div className="absolute inset-0 bg-gradient-to-b from-gold/5 to-transparent pointer-events-none" />
+        
+        <AnimatePresence mode="wait">
+            {hoveredAspect ? (
+                <motion.div
+                    key="content"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="relative z-10 text-center"
+                >
+                    <h4 className="text-gold font-heading text-sm mb-2 tracking-widest uppercase">
+                        {ASPECT_DESCRIPTIONS[hoveredAspect].title}
+                    </h4>
+                    <p className="text-parchment/80 text-xs italic mb-3 font-serif">
+                        "{ASPECT_DESCRIPTIONS[hoveredAspect].motto}"
+                    </p>
+                    <p className="text-ash/80 text-xs leading-relaxed max-w-[90%] mx-auto">
+                        {ASPECT_DESCRIPTIONS[hoveredAspect].desc}
+                    </p>
+                </motion.div>
+            ) : (
+                <motion.div
+                    key="guide"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="relative z-10 flex flex-col items-center justify-center h-full min-h-[88px] text-gold/30"
+                >
+                    <p className="text-xs font-heading tracking-widest uppercase mb-1">
+                        HIDDEN KNOWLEDGE
+                    </p>
+                    <p className="text-[10px] tracking-wide">
+                        点击或悬停以揭示准则奥秘
+                    </p>
+                </motion.div>
+            )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 };

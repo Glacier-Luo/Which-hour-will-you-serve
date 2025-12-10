@@ -85,7 +85,7 @@ export const SoundProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const audio = audioRefs.current[type];
     if (audio) {
       if (type === 'ambient') {
-        audio.play().catch(e => console.log('Audio play failed (likely due to autoplay policy):', e));
+        audio.play().catch(() => {}); // Silence autoplay errors
       } else {
         // Clone for overlapping sounds (except ambient)
         const clone = audio.cloneNode() as HTMLAudioElement;
