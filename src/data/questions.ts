@@ -435,9 +435,9 @@ export const questions: Question[] = [
       { id: 'C', text: '坩埚王 (King Crucible)', aspect: 'Forge', value: 2, flavorText: '活体火焰的傲慢君主。他能锻造一切，但他总是很饿，渴望燃料。', nextQuestionId: 'q11_hunter' },
       { id: 'D', text: '先知 (Raw Prophet)', aspect: 'Grail', value: 2, flavorText: '一团歌唱的血肉。它的歌声令人迷醉，能解开任何人的心防。', nextQuestionId: 'q11_hunter' },
       { id: 'E', text: '提示者 (Hint)', aspect: 'Lantern', value: 2, flavorText: '一个发光的几何体。它知道很多事情，但它的光芒会灼伤你的视网膜。', nextQuestionId: 'q11_hunter' },
-      { id: 'F', text: '危险的成虫 (Perilous Imago)', aspect: 'Moth', value: 2, flavorText: '它在现实与梦境之间振翅。它的鳞粉能让人发疯，也能让人遗忘。', nextQuestionId: 'q11_hunter' },
-      { id: 'G', text: '门扉猎手 (Key-Hunter)', aspect: 'Knock', value: 2, flavorText: '它能嗅到锁的味道。没有它打不开的门，也没有它找不到的路。', nextQuestionId: 'q11_hunter' },
-      { id: 'H', text: '寂静馆的图书管理员', aspect: 'Secret Histories', value: 2, flavorText: '他带来了不存在的书籍。他知道所有被抹去的历史，但他要求你用记忆交换。', nextQuestionId: 'q11_hunter' },
+      { id: 'F', text: '匿凶成虫 (Perilous Imago)', aspect: 'Moth', value: 2, flavorText: '它在现实与梦境之间振翅。它的鳞粉能让人发疯，也能让人遗忘。', nextQuestionId: 'q11_hunter' },
+      { id: 'G', text: '钥匙猎手 (Key-Hunter)', aspect: 'Knock', value: 2, flavorText: '它能嗅到锁的味道。没有它打不开的门，也没有它找不到的路。', nextQuestionId: 'q11_hunter' },
+      { id: 'H', text: '噤声书屋的图书管理员', aspect: 'Secret Histories', value: 2, flavorText: '他带来了不存在的书籍。他知道所有被抹去的历史，但他要求你用记忆交换。', nextQuestionId: 'q11_hunter' },
       { 
         id: 'I', 
         text: '特蕾莎 (Teresa)', 
@@ -467,7 +467,7 @@ export const questions: Question[] = [
     options: [
       { id: 'A', text: '让他“意外”消失', aspect: 'Edge', value: 3, flavorText: '死人不会说话，意外总是发生。雨夜是最好的掩护。', nextQuestionId: 'q12_aftermath_violence' },
       { id: 'B', text: '邀请他加入我们', aspect: 'Grail', value: 3, flavorText: '没有人能拒绝真正的诱惑，即使是猎人也会渴望猎物。他也是饥饿的。', nextQuestionId: 'q12_aftermath_seduction' },
-      { id: 'C', text: '用法术让他遗忘', aspect: 'Winter', value: 3, flavorText: '记忆是可以被擦除的粉笔字，让他忘记自己是谁。白色的虚无吞噬了他。', nextQuestionId: 'q12_aftermath_hiding' },
+      { id: 'C', text: '让他被世人遗忘', aspect: 'Winter', value: 3, flavorText: '冬之准则不在于遗忘，而在于“被遗忘”。他的名字将从所有记录中消失，仿佛从未存在过。', nextQuestionId: 'q12_aftermath_hiding' },
       { id: 'D', text: '搬迁据点，暂避锋芒', aspect: 'Secret Histories', value: 2, flavorText: '我们像影子一样移动，在地图的缝隙中生存。他找不到不存在的地方。', nextQuestionId: 'q12_aftermath_hiding' },
       { id: 'E', text: '正面应对，展示无害的假象', aspect: 'Heart', value: 2, flavorText: '你用真诚的微笑和无懈可击的伪装让他困惑。你的心跳平稳如常。', nextQuestionId: 'q12_aftermath_hiding' },
       { id: 'F', text: '引诱他进入疯狂的陷阱', aspect: 'Moth', value: 3, flavorText: '你为他准备了一个迷宫。当他走出来时（如果他能），他将不再是他自己。', nextQuestionId: 'q12_aftermath_trap' },
@@ -676,12 +676,12 @@ export const questions: Question[] = [
   {
     id: 'q17b_spider_door',
     title: '蜘蛛之门 (The Spider\'s Door)',
-    description: '你没有止步于牡鹿之门。你向下走，来到了更深的地方。这里布满了粘稠的网，空气中弥漫着古老的血腥味。一只巨大的复眼在黑暗中注视着你。',
+    description: '你没有止步于牡鹿之门。你向下走，来到了更深的地方。这里没有网，只有无尽的灰色沙砾在风中低语。面前的门扉晶亮如雨滴，黑色的表面渗出饱满的血珠，仿佛无数只肿胀的蜱虫。',
     options: [
       { id: 'A', text: '献上你的鲜血', aspect: 'Grail', value: 4, flavorText: '它吸食了你的生命，但也赐予了你永不满足的渴望。你感到一种扭曲的力量在体内涌动。', nextQuestionId: 'q18_hunger' },
-      { id: 'B', text: '剪断蛛网', aspect: 'Edge', value: 4, flavorText: '你用暴力开辟了道路。蜘蛛畏惧你的锋芒，退回了阴影之中。', nextQuestionId: 'q18_hunger' },
-      { id: 'C', text: '与蜘蛛交易秘密', aspect: 'Secret Histories', value: 4, flavorText: '你知道它渴望什么。你用一个被遗忘的名字换取了通过权。', nextQuestionId: 'q18_hunger' },
-      { id: 'D', text: '让自己被缠绕', aspect: 'Winter', value: 4, flavorText: '你停止了挣扎，像死尸一样安静。它对死物不感兴趣，你滑了过去。', nextQuestionId: 'q18_hunger' }
+      { id: 'B', text: '强行通过', aspect: 'Edge', value: 4, flavorText: '你用暴力开辟了道路。门扉上的血珠畏惧你的锋芒，纷纷退散。', nextQuestionId: 'q18_hunger' },
+      { id: 'C', text: '与门扉交易秘密', aspect: 'Secret Histories', value: 4, flavorText: '你知道它渴望什么。你用一个被遗忘的名字换取了通过权。', nextQuestionId: 'q18_hunger' },
+      { id: 'D', text: '像死人一样静默', aspect: 'Winter', value: 4, flavorText: '你停止了呼吸和心跳，像死尸一样冰冷。那些渴望温热鲜血的“蜱虫”对你失去了兴趣。', nextQuestionId: 'q18_hunger' }
     ]
   },
 
