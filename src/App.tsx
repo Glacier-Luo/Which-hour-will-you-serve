@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Quiz } from './components/Quiz';
 import { Results } from './components/Results';
 import { SupportModal } from './components/SupportModal';
+import { MilestoneModal } from './components/MilestoneModal';
+import { HushHousePromo } from './components/HushHousePromo';
 import type { Aspect, AspectScore, HistoryRecord } from './types';
 import { getHighestAspect } from './utils/matching';
 import { useSound } from './contexts/SoundContext';
@@ -35,21 +37,27 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
   const [showSupportModal, setShowSupportModal] = useState(false);
+  const [showMilestoneModal, setShowMilestoneModal] = useState(false);
 
   useEffect(() => {
     // Visit count logic
     const visitCount = parseInt(localStorage.getItem('app_visit_count') || '0');
     const hasShownSupport = localStorage.getItem('app_has_shown_support') === 'true';
+    const hasShownMilestone = localStorage.getItem('app_milestone_25k_shown') === 'true';
     
     // Increment visit count on mount (once per session/refresh)
-    // To avoid incrementing on strict mode double render, we could use a ref, but for simple logic this is fine
-    // Or better, check if we already incremented this session? No, user requirement is "multiple visits".
-    // Let's just increment.
     const newCount = visitCount + 1;
     localStorage.setItem('app_visit_count', newCount.toString());
 
-    // Show modal if visits > 2 and haven't shown yet
-    if (newCount > 2 && !hasShownSupport) {
+    // Milestone logic: Show if not shown yet
+    if (!hasShownMilestone) {
+      const timer = setTimeout(() => {
+        setShowMilestoneModal(true);
+      }, 1500);
+      return () => clearTimeout(timer);
+    } 
+    // Support logic: Only if milestone isn't showing
+    else if (newCount > 2 && !hasShownSupport) {
         // Delay slightly to not be intrusive immediately
         const timer = setTimeout(() => {
             setShowSupportModal(true);
@@ -61,6 +69,11 @@ function App() {
   const handleCloseSupportModal = () => {
     setShowSupportModal(false);
     localStorage.setItem('app_has_shown_support', 'true');
+  };
+
+  const handleCloseMilestoneModal = () => {
+    setShowMilestoneModal(false);
+    localStorage.setItem('app_milestone_25k_shown', 'true');
   };
 
   useEffect(() => {
@@ -82,6 +95,24 @@ function App() {
   useEffect(() => {
     localStorage.setItem('app_history', JSON.stringify(history));
   }, [history]);
+
+  // Debug helpers
+  useEffect(() => {
+    // @ts-ignore
+    window.debugHelper = {
+      resetSupport: () => {
+        localStorage.removeItem('app_has_shown_support');
+        localStorage.setItem('app_visit_count', '3');
+        console.log('Support modal reset. Refresh to see it.');
+      },
+      resetMilestone: () => {
+        localStorage.removeItem('app_milestone_25k_shown');
+        console.log('Milestone modal reset. Refresh to see it.');
+      },
+      showMilestone: () => setShowMilestoneModal(true),
+      showSupport: () => setShowSupportModal(true)
+    };
+  }, []);
 
   // Try to play ambient sound on mount if started, or when starting
   useEffect(() => {
@@ -254,6 +285,8 @@ function App() {
           </>
         )}
 
+        {!hasStarted && <HushHousePromo />}
+
         <footer className="mt-16 text-ash/40 text-xs font-decorative tracking-widest flex flex-col items-center gap-2">
           <p>VOL. I — THE WATCHMAN'S TREE</p>
           <div className="flex flex-col items-center gap-1 mt-4 opacity-60 hover:opacity-100 transition-opacity">
@@ -289,6 +322,10 @@ function App() {
       <SupportModal 
         isOpen={showSupportModal} 
         onClose={handleCloseSupportModal} 
+      />
+      <MilestoneModal 
+        isOpen={showMilestoneModal} 
+        onClose={handleCloseMilestoneModal} 
       />
     </div>
   );

@@ -7,6 +7,7 @@ import { calculateHourMatch, calculateJudgment } from '../utils/matching';
 import { CHARACTER_IMAGES } from '../data/characters';
 import { useSound } from '../contexts/SoundContext';
 import { BiographyModal } from './BiographyModal';
+import { HushHousePromo } from './HushHousePromo';
 import { 
   RefreshCw, Share2, Download, BookOpen
 } from 'lucide-react';
@@ -622,6 +623,8 @@ export const Results: React.FC<ResultsProps> = ({ scores, onRestart, quizMode, h
           分享命运
         </button>
       </motion.div>
+
+      <HushHousePromo className="mt-16" />
 
       <BiographyModal
         isOpen={isBioModalOpen}
