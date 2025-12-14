@@ -43,7 +43,7 @@ function App() {
     // Visit count logic
     const visitCount = parseInt(localStorage.getItem('app_visit_count') || '0');
     const hasShownSupport = localStorage.getItem('app_has_shown_support') === 'true';
-    const hasShownMilestone = localStorage.getItem('app_milestone_25k_shown') === 'true';
+    const hasShownMilestone = localStorage.getItem('app_milestone_30k_shown') === 'true';
     
     // Increment visit count on mount (once per session/refresh)
     const newCount = visitCount + 1;
@@ -73,7 +73,7 @@ function App() {
 
   const handleCloseMilestoneModal = () => {
     setShowMilestoneModal(false);
-    localStorage.setItem('app_milestone_25k_shown', 'true');
+    localStorage.setItem('app_milestone_30k_shown', 'true');
   };
 
   useEffect(() => {
@@ -106,7 +106,7 @@ function App() {
         console.log('Support modal reset. Refresh to see it.');
       },
       resetMilestone: () => {
-        localStorage.removeItem('app_milestone_25k_shown');
+        localStorage.removeItem('app_milestone_30k_shown');
         console.log('Milestone modal reset. Refresh to see it.');
       },
       showMilestone: () => setShowMilestoneModal(true),

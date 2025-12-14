@@ -24,11 +24,11 @@ export const MilestoneModal: React.FC<MilestoneModalProps> = ({ isOpen, onClose 
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative w-full max-w-lg bg-onyx border border-gold/40 shadow-[0_0_50px_rgba(192,160,98,0.2)] p-6 md:p-8 rounded-sm text-center"
+            className="relative w-full max-w-lg bg-onyx border border-gold/40 shadow-[0_0_50px_rgba(192,160,98,0.2)] p-6 md:p-8 rounded-sm text-center max-h-[85vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gold/20 scrollbar-track-transparent"
           >
             <button 
               onClick={onClose}
-              className="absolute top-4 right-4 text-gold/40 hover:text-gold transition-colors"
+              className="absolute top-4 right-4 text-gold/40 hover:text-gold transition-colors z-10"
             >
               <X size={20} />
             </button>
@@ -39,7 +39,7 @@ export const MilestoneModal: React.FC<MilestoneModalProps> = ({ isOpen, onClose 
                 </div>
             </div>
 
-            <h3 className="text-2xl text-gold font-heading mb-2 tracking-wider">25,000 次的相遇</h3>
+            <h3 className="text-2xl text-gold font-heading mb-2 tracking-wider">30,000 次的相遇</h3>
             
             <div className="h-px w-16 bg-gold/30 mx-auto my-4" />
 
@@ -48,10 +48,13 @@ export const MilestoneModal: React.FC<MilestoneModalProps> = ({ isOpen, onClose 
                     最初，这只是一个出于兴趣的微小尝试，未曾想过能与如此多的灵魂在漫宿的边缘相遇。
                 </p>
                 <p className="indent-8">
-                    感谢每一位造访此地的旅人，是你们的注视让这些文字拥有了生命。每一次点击，都是一次无形的共鸣。
+                    感谢你们的停泊，让这片虚构的海域变得如此真实。每一次点击，都是一次无形的共鸣；每一次停留，都让这座无墙之屋更加坚固。
                 </p>
                 <p className="text-center text-gold/60 italic pt-2 pb-2 border-t border-b border-gold/10 my-4">
-                    “愿辉光照亮你上升的道路，亦或在无光的深处，你找到了属于自己的宁静。”
+                    “门关已开，而我们皆是过客。愿你在无墙之屋中，寻得那把属于你的钥匙。”
+                </p>
+                <p className="indent-8 text-xs text-parchment/60">
+                    最近我的事儿也结束一些了，我将继续投入到这个以及更多新的二创项目的开发中。如果您感兴趣，欢迎在小黑盒或小红书关注我，我会第一时间在那里发布更新动态。
                 </p>
                 <p>
                     如果您对《密教模拟器》与《司辰之书》的世界观感兴趣，或许也会喜欢我的另一个二创项目：

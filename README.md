@@ -9,6 +9,9 @@
 ![React](https://img.shields.io/badge/React-19-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8)
+![Visitors](https://busuanzi.ibruce.info/badge/page.svg?url=https://luyu14039.github.io/Which-hour-will-you-serve/&color=eab308)
+
+**🎉 感谢 30,000+ 位访客的造访！愿辉光照亮你们的道路。**
 
 **如果你喜欢这个项目，请给它一个 Star ⭐️！**
 
