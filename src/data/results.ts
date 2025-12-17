@@ -63,7 +63,7 @@ export const ASPECT_JUDGMENTS: Record<Aspect, Judgment> = {
     tarotCard: 'XXI - THE WORLD'
   },
   'Moon': {
-    title: '守夜人 (The Watchman)',
+    title: '守望者 (The Watchman)',
     description: '你是黑夜的守望者，游走在清醒与疯狂的边缘。你聆听潮汐的低语，窥视月光下的阴影。对你而言，真相往往隐藏在谎言的背面，而最深刻的秘密总是伴随着危险。你并不畏惧黑暗，因为你明白，只有在黑暗中，某些事物才会显露真容。你守护着那些不应被揭示的知识，如同大海守护着深渊。',
     motto: '“行于夜者，被遗忘者。”',
     tarotCard: 'XVIII - THE MOON'
@@ -137,7 +137,7 @@ export const SPECIAL_COMBINATIONS: Record<string, Judgment> = {
     tarotCard: 'IV - THE EMPEROR'
   },
   'Edge+Heart': {
-    title: '决斗者 (The Duelist)',
+    title: '决斗士 (The Duelist)',
     description: '对你而言，战斗并非为了毁灭，而是一场赞美生命的狂野舞蹈。你在刀光剑影中感受心脏剧烈的搏动，在生死的边缘体验存在的极乐。你从不畏惧受伤，因为伤口只会让你更加强韧；你也不拒绝冲突，因为唯有在激烈的对抗中，生命力才会如鲜血般喷薄而出。你是永不疲倦的斗士，用每一次呼吸和挥击，向着虚无宣示着生命的顽强与热烈。',
     motto: '“生命即是斗争。”',
     tarotCard: 'VII - THE CHARIOT'

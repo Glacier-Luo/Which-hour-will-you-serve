@@ -8,15 +8,17 @@ import { StoryView } from './features/story/components/StoryView';
 import type { Aspect, AspectScore, HistoryRecord } from './types';
 import { getHighestAspect } from './utils/matching';
 import { useSound } from './contexts/SoundContext';
-import { Volume2, VolumeX, Sparkles, BrainCircuit, BookOpen } from 'lucide-react';
+import { Volume2, VolumeX, Sparkles, BrainCircuit, BookOpen, Moon } from 'lucide-react';
 import { questions as OCCULT_QUESTIONS } from './data/questions';
 import { REALITY_QUESTIONS } from './data/reality_questions';
+import { DailyFortuneModal } from './components/DailyFortuneModal';
 
 type QuizMode = 'menu' | 'occult' | 'reality' | 'story';
 
 function App() {
   const { playSound, isMuted, toggleMute } = useSound();
   const [currentAspect, setCurrentAspect] = useState<Aspect | null>(null);
+  const [showFortuneModal, setShowFortuneModal] = useState(false);
   const [quizMode, setQuizMode] = useState<QuizMode>(() => {
     const saved = localStorage.getItem('app_quizMode');
     return (saved ? JSON.parse(saved) : 'menu') as QuizMode;
@@ -238,72 +240,90 @@ function App() {
         )}
         
         {!hasStarted ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl px-4">
-            {/* Mode A: Occult */}
-            <button 
-                 className="card-frame p-8 flex flex-col items-center text-center transform transition-all duration-500 hover:scale-[1.02] group cursor-pointer bg-onyx/40 hover:bg-onyx/60"
-                 onClick={() => handleStart('occult')}
-                 onMouseEnter={() => playSound('hover')}>
-                <div className="mb-6 text-gold/80 group-hover:text-gold transition-colors">
-                    <Sparkles size={48} strokeWidth={1} />
+          <>
+            {/* Daily Fortune Banner */}
+            <div className="w-full max-w-6xl px-4 mb-8">
+              <button
+                onClick={() => setShowFortuneModal(true)}
+                onMouseEnter={() => playSound('hover')}
+                className="w-full py-4 px-6 border border-gold/30 bg-onyx/40 hover:bg-onyx/60 text-gold/80 hover:text-gold transition-all duration-300 flex items-center justify-center gap-3 group relative overflow-hidden"
+              >
+                <div className="absolute top-0 right-0 bg-gold/20 text-gold text-[10px] px-2 py-0.5 font-heading tracking-wider">
+                  40k 访客特典
                 </div>
-                <h3 className="text-2xl text-gold font-heading mb-2">飞升之路</h3>
-                <p className="text-xs text-gold/40 font-decorative tracking-widest uppercase mb-4">The Path of Ascension</p>
-                <p className="text-parchment/80 text-sm leading-relaxed mb-6 flex-1">
-                    扮演一名寻求飞升的教主，在梦境与仪式中做出抉择。适合熟悉《密教模拟器》背景的访客。
-                </p>
-                <div className="w-full py-2 border border-gold/30 text-gold/60 text-sm font-heading tracking-widest uppercase group-hover:bg-gold group-hover:text-void transition-all duration-300">
-                    进入漫宿
-                </div>
-            </button>
+                <Moon size={20} className="group-hover:animate-pulse text-gold" />
+                <span className="font-heading tracking-[0.2em] text-base">今日运势 · DAILY FORTUNE</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gold/5 to-transparent -translate-x-full group-hover:animate-[shimmer_2s_infinite]" />
+              </button>
+            </div>
 
-            {/* Mode B: Reality */}
-            <button 
-                 className="card-frame p-8 flex flex-col items-center text-center transform transition-all duration-500 hover:scale-[1.02] group cursor-pointer bg-onyx/40 hover:bg-onyx/60"
-                 onClick={() => handleStart('reality')}
-                 onMouseEnter={() => playSound('hover')}>
-                <div className="mb-6 text-gold/80 group-hover:text-gold transition-colors">
-                    <BrainCircuit size={48} strokeWidth={1} />
-                </div>
-                <h3 className="text-2xl text-gold font-heading mb-2">现世之镜</h3>
-                <p className="text-xs text-gold/40 font-decorative tracking-widest uppercase mb-4">The Mirror of the World</p>
-                <p className="text-parchment/80 text-sm leading-relaxed mb-6 flex-1">
-                    基于现代生活情境的心理测试，探索你灵魂深处的原型。适合希望了解真实自我的访客。
-                </p>
-                <div className="w-full py-2 border border-gold/30 text-gold/60 text-sm font-heading tracking-widest uppercase group-hover:bg-gold group-hover:text-void transition-all duration-300">
-                    凝视倒影
-                </div>
-            </button>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl px-4">
+              {/* Mode A: Occult */}
+              <button 
+                  className="card-frame p-8 flex flex-col items-center text-center transform transition-all duration-500 hover:scale-[1.02] group cursor-pointer bg-onyx/40 hover:bg-onyx/60"
+                  onClick={() => handleStart('occult')}
+                  onMouseEnter={() => playSound('hover')}>
+                  <div className="mb-6 text-gold/80 group-hover:text-gold transition-colors">
+                      <Sparkles size={48} strokeWidth={1} />
+                  </div>
+                  <h3 className="text-2xl text-gold font-heading mb-2">飞升之路</h3>
+                  <p className="text-xs text-gold/40 font-decorative tracking-widest uppercase mb-4">The Path of Ascension</p>
+                  <p className="text-parchment/80 text-sm leading-relaxed mb-6 flex-1">
+                      扮演一名寻求飞升的教主，在梦境与仪式中做出抉择。适合熟悉《密教模拟器》背景的访客。
+                  </p>
+                  <div className="w-full py-2 border border-gold/30 text-gold/60 text-sm font-heading tracking-widest uppercase group-hover:bg-gold group-hover:text-void transition-all duration-300">
+                      进入漫宿
+                  </div>
+              </button>
 
-            {/* Mode C: Story (New) */}
-            <button 
-                 className="card-frame p-8 flex flex-col items-center text-center transform transition-all duration-500 hover:scale-[1.02] group cursor-pointer bg-onyx/40 hover:bg-onyx/60 relative overflow-hidden"
-                 onClick={handleStoryClick}
-                 onMouseEnter={() => playSound('hover')}>
-                
-                {/* Labels */}
-                <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5 z-10">
-                  <span className="px-2 py-0.5 bg-amber-900/60 text-amber-200 text-[10px] font-bold tracking-wider border border-amber-500/30 rounded backdrop-blur-sm">
-                    开发中
-                  </span>
-                  <span className="px-2 py-0.5 bg-stone-800/60 text-stone-400 text-[10px] tracking-wider border border-stone-600/30 rounded backdrop-blur-sm">
-                    50k 访问特典
-                  </span>
-                </div>
+              {/* Mode B: Reality */}
+              <button 
+                  className="card-frame p-8 flex flex-col items-center text-center transform transition-all duration-500 hover:scale-[1.02] group cursor-pointer bg-onyx/40 hover:bg-onyx/60"
+                  onClick={() => handleStart('reality')}
+                  onMouseEnter={() => playSound('hover')}>
+                  <div className="mb-6 text-gold/80 group-hover:text-gold transition-colors">
+                      <BrainCircuit size={48} strokeWidth={1} />
+                  </div>
+                  <h3 className="text-2xl text-gold font-heading mb-2">现世之镜</h3>
+                  <p className="text-xs text-gold/40 font-decorative tracking-widest uppercase mb-4">The Mirror of the World</p>
+                  <p className="text-parchment/80 text-sm leading-relaxed mb-6 flex-1">
+                      基于现代生活情境的心理测试，探索你灵魂深处的原型。适合希望了解真实自我的访客。
+                  </p>
+                  <div className="w-full py-2 border border-gold/30 text-gold/60 text-sm font-heading tracking-widest uppercase group-hover:bg-gold group-hover:text-void transition-all duration-300">
+                      凝视倒影
+                  </div>
+              </button>
 
-                <div className="mb-6 text-gold/80 group-hover:text-gold transition-colors">
-                    <BookOpen size={48} strokeWidth={1} />
-                </div>
-                <h3 className="text-2xl text-gold font-heading mb-2">苍白卷宗</h3>
-                <p className="text-xs text-gold/40 font-decorative tracking-widest uppercase mb-4">The Pale Dossier</p>
-                <p className="text-parchment/80 text-sm leading-relaxed mb-6 flex-1">
-                    扮演防剿局探员，在1920年代的伦敦调查一桩涉及飞升的诡异案件。
-                </p>
-                <div className="w-full py-2 border border-gold/30 text-gold/60 text-sm font-heading tracking-widest uppercase group-hover:bg-gold group-hover:text-void transition-all duration-300">
-                    阅读档案
-                </div>
-            </button>
-          </div>
+              {/* Mode C: Story (New) */}
+              <button 
+                  className="card-frame p-8 flex flex-col items-center text-center transform transition-all duration-500 hover:scale-[1.02] group cursor-pointer bg-onyx/40 hover:bg-onyx/60 relative overflow-hidden"
+                  onClick={handleStoryClick}
+                  onMouseEnter={() => playSound('hover')}>
+                  
+                  {/* Labels */}
+                  <div className="absolute top-3 right-3 flex flex-col items-end gap-1.5 z-10">
+                    <span className="px-2 py-0.5 bg-amber-900/60 text-amber-200 text-[10px] font-bold tracking-wider border border-amber-500/30 rounded backdrop-blur-sm">
+                      开发中
+                    </span>
+                    <span className="px-2 py-0.5 bg-stone-800/60 text-stone-400 text-[10px] tracking-wider border border-stone-600/30 rounded backdrop-blur-sm">
+                      50k 访问特典
+                    </span>
+                  </div>
+
+                  <div className="mb-6 text-gold/80 group-hover:text-gold transition-colors">
+                      <BookOpen size={48} strokeWidth={1} />
+                  </div>
+                  <h3 className="text-2xl text-gold font-heading mb-2">苍白卷宗</h3>
+                  <p className="text-xs text-gold/40 font-decorative tracking-widest uppercase mb-4">The Pale Dossier</p>
+                  <p className="text-parchment/80 text-sm leading-relaxed mb-6 flex-1">
+                      扮演防剿局探员，在1920年代的伦敦调查一桩涉及飞升的诡异案件。
+                  </p>
+                  <div className="w-full py-2 border border-gold/30 text-gold/60 text-sm font-heading tracking-widest uppercase group-hover:bg-gold group-hover:text-void transition-all duration-300">
+                      阅读档案
+                  </div>
+              </button>
+            </div>
+          </>
         ) : (
           <>
             {quizMode === 'story' ? (
@@ -321,6 +341,7 @@ function App() {
                 onRestart={handleRestart} 
                 quizMode={quizMode as 'occult' | 'reality'} 
                 history={history} 
+                onOpenFortune={() => setShowFortuneModal(true)}
               />
             )}
           </>
@@ -367,6 +388,10 @@ function App() {
       <MilestoneModal 
         isOpen={showMilestoneModal} 
         onClose={handleCloseMilestoneModal} 
+      />
+      <DailyFortuneModal
+        isOpen={showFortuneModal}
+        onClose={() => setShowFortuneModal(false)}
       />
     </div>
   );

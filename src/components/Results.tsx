@@ -9,7 +9,7 @@ import { useSound } from '../contexts/SoundContext';
 import { BiographyModal } from './BiographyModal';
 import { HushHousePromo } from './HushHousePromo';
 import { 
-  RefreshCw, Share2, Download, BookOpen
+  RefreshCw, Share2, Download, BookOpen, Moon
 } from 'lucide-react';
 
 interface ResultsProps {
@@ -17,6 +17,7 @@ interface ResultsProps {
   onRestart: () => void;
   quizMode?: 'menu' | 'occult' | 'reality';
   history: HistoryRecord[];
+  onOpenFortune?: () => void;
 }
 
 const ASPECT_ICONS: Record<Aspect, string> = {
@@ -282,7 +283,7 @@ const AspectProgress: React.FC<{ scores: AspectScore[] }> = ({ scores }) => {
   );
 };
 
-export const Results: React.FC<ResultsProps> = ({ scores, onRestart, quizMode, history }) => {
+export const Results: React.FC<ResultsProps> = ({ scores, onRestart, quizMode, history, onOpenFortune }) => {
   const { playSound } = useSound();
   const [activeTab, setActiveTab] = useState<'IDENTITY' | 'ANALYSIS' | 'SOUL'>('IDENTITY');
   const [isBioModalOpen, setIsBioModalOpen] = useState(false);
@@ -619,6 +620,18 @@ export const Results: React.FC<ResultsProps> = ({ scores, onRestart, quizMode, h
           >
             <BookOpen size={16} />
             书写命运
+          </button>
+        )}
+
+        {onOpenFortune && (
+          <button 
+            onClick={onOpenFortune}
+            onMouseEnter={() => playSound('hover')}
+            data-html2canvas-ignore="true"
+            className="flex items-center justify-center gap-2 px-8 py-3 bg-gold/10 border border-gold/40 text-gold hover:bg-gold/20 transition-all duration-300 font-heading tracking-widest uppercase text-sm w-full md:w-auto"
+          >
+            <Moon size={16} />
+            <span>今日运势</span>
           </button>
         )}
 
