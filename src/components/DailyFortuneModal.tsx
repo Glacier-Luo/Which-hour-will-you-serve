@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, BookOpen } from 'lucide-react';
 import { HOURS_DATA } from '../data/hours';
 import { FORTUNES_DATA } from '../data/fortunes';
+import { getAlmanacForDate } from '../utils/almanac';
 import { useSound } from '../contexts/SoundContext';
 import type { Aspect } from '../types';
 
@@ -36,7 +37,8 @@ const ASPECT_ICONS: Record<Aspect, string> = {
 
 export const DailyFortuneModal: React.FC<DailyFortuneModalProps> = ({ isOpen, onClose }) => {
   const { playSound } = useSound();
-  const [fortune, setFortune] = useState<{ hour: typeof HOURS_DATA[0], motto: string } | null>(null);
+  const [fortune, setFortune] = useState<{ hour: typeof HOURS_DATA[0], motto: string, isRecurringFavor?: boolean } | null>(null);
+  const almanac = getAlmanacForDate();
 
   useEffect(() => {
     if (isOpen) {
@@ -55,6 +57,11 @@ export const DailyFortuneModal: React.FC<DailyFortuneModalProps> = ({ isOpen, on
     const today = new Date().toDateString();
     const savedDate = localStorage.getItem('app_daily_fortune_date');
     const savedResult = localStorage.getItem('app_daily_fortune_result');
+    
+    // Check for recurring favor (consecutive days with same hour)
+    const lastDate = localStorage.getItem('app_daily_fortune_last_date');
+    const lastHourId = localStorage.getItem('app_daily_fortune_last_hour_id');
+    let isRecurringFavor = false;
 
     if (savedDate === today && savedResult) {
       try {
@@ -62,10 +69,14 @@ export const DailyFortuneModal: React.FC<DailyFortuneModalProps> = ({ isOpen, on
         const hour = HOURS_DATA.find(h => h.id === result.hourId);
         const fortuneData = FORTUNES_DATA.find(f => f.hourId === result.hourId);
         
+        // Check if this result was already marked as recurring
+        const wasRecurring = localStorage.getItem('app_daily_fortune_is_recurring') === 'true';
+
         if (hour && fortuneData) {
           return {
             hour,
-            motto: fortuneData.mottos[result.mottoIndex] || fortuneData.mottos[0]
+            motto: fortuneData.mottos[result.mottoIndex] || fortuneData.mottos[0],
+            isRecurringFavor: wasRecurring
           };
         }
       } catch (e) {
@@ -81,6 +92,16 @@ export const DailyFortuneModal: React.FC<DailyFortuneModalProps> = ({ isOpen, on
         return { hour: randomHour, motto: "命运沉默不语。" };
     }
 
+    // Check if yesterday's hour matches today's drawn hour
+    // We need to check if 'lastDate' was actually yesterday
+    if (lastDate) {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        if (lastDate === yesterday.toDateString() && lastHourId === randomHour.id) {
+            isRecurringFavor = true;
+        }
+    }
+
     const randomMottoIndex = Math.floor(Math.random() * fortuneData.mottos.length);
     const motto = fortuneData.mottos[randomMottoIndex];
 
@@ -90,10 +111,16 @@ export const DailyFortuneModal: React.FC<DailyFortuneModalProps> = ({ isOpen, on
       timestamp: Date.now()
     };
 
+    // Save current state
     localStorage.setItem('app_daily_fortune_date', today);
     localStorage.setItem('app_daily_fortune_result', JSON.stringify(result));
+    localStorage.setItem('app_daily_fortune_is_recurring', String(isRecurringFavor));
+    
+    // Update history for next time
+    localStorage.setItem('app_daily_fortune_last_date', today);
+    localStorage.setItem('app_daily_fortune_last_hour_id', randomHour.id);
 
-    return { hour: randomHour, motto };
+    return { hour: randomHour, motto, isRecurringFavor };
   };
 
   return (
@@ -117,21 +144,23 @@ export const DailyFortuneModal: React.FC<DailyFortuneModalProps> = ({ isOpen, on
             onClick={(e) => e.stopPropagation()}
           >
             {/* Baseboard / Container */}
-            <div className="w-full bg-onyx/90 border border-gold/30 p-8 rounded-sm shadow-2xl relative overflow-hidden">
+            <div className="w-full bg-onyx/90 border border-gold/30 rounded-sm shadow-2xl relative flex flex-col max-h-[85vh]">
                 {/* Decorative Corner Borders */}
-                <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-gold/40 rounded-tl-lg" />
-                <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-gold/40 rounded-tr-lg" />
-                <div className="absolute bottom-0 left-0 w-16 h-16 border-b-2 border-l-2 border-gold/40 rounded-bl-lg" />
-                <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-gold/40 rounded-br-lg" />
+                <div className="absolute top-0 left-0 w-16 h-16 border-t-2 border-l-2 border-gold/40 rounded-tl-lg pointer-events-none z-20" />
+                <div className="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-gold/40 rounded-tr-lg pointer-events-none z-20" />
+                <div className="absolute bottom-0 left-0 w-16 h-16 border-b-2 border-l-2 border-gold/40 rounded-bl-lg pointer-events-none z-20" />
+                <div className="absolute bottom-0 right-0 w-16 h-16 border-b-2 border-r-2 border-gold/40 rounded-br-lg pointer-events-none z-20" />
 
                 <button 
                 onClick={onClose}
-                className="absolute top-4 right-4 text-gold/60 hover:text-gold transition-colors p-2 z-50"
+                className="absolute top-2 right-2 md:top-4 md:right-4 text-gold/60 hover:text-gold transition-colors p-2 z-50"
                 >
                 <X size={24} />
                 </button>
 
-                <div className="text-center mb-8">
+                {/* Scrollable Content Area */}
+                <div className="overflow-y-auto p-6 md:p-8 custom-scrollbar">
+                    <div className="text-center mb-8">
                 <h3 className="text-2xl text-gold font-heading tracking-widest mb-2">今日司辰</h3>
                 <div className="inline-block px-2 py-0.5 bg-gold/10 border border-gold/20 rounded text-[10px] text-gold/60 mb-2 tracking-wider">
                     40k 访客特典
@@ -238,18 +267,70 @@ export const DailyFortuneModal: React.FC<DailyFortuneModalProps> = ({ isOpen, on
                             <p className="text-parchment/90 text-base font-serif leading-relaxed italic drop-shadow-md">
                                 "{fortune.motto}"
                             </p>
+                            {fortune.isRecurringFavor && (
+                                <p className="text-gold/40 text-[10px] mt-3 tracking-wider animate-pulse">
+                                    这名司辰似乎格外眷顾你......
+                                </p>
+                            )}
                             <Sparkles className="absolute bottom-0 right-0 w-4 h-4 text-gold/30 animate-pulse" />
                         </motion.div>
                     )}
+
+                    {/* Almanac Section */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.8 }}
+                        className="w-full mt-4 pt-4 border-t border-gold/10"
+                    >
+                        <div className="flex flex-col items-center gap-3 text-xs font-serif">
+                            <div className="flex flex-col items-center gap-0.5 mb-1">
+                                <div className="text-gold/60 tracking-widest text-[11px] font-heading">
+                                    {almanac.date}
+                                </div>
+                                <div className="text-gold/30 tracking-wider text-[9px] font-serif mb-1">
+                                    {almanac.dateCn}
+                                </div>
+                                <div className="text-gold/30 tracking-wider text-[9px]">
+                                    {almanac.lunarText}
+                                </div>
+                                <div className="text-gold/20 tracking-wider text-[8px] font-serif">
+                                    {almanac.lunarTextCn}
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-6 w-full justify-center">
+                                <div className="flex flex-col items-center gap-1">
+                                    <span className="text-gold/40 text-[10px] border border-gold/20 px-1 rounded">宜</span>
+                                    <span className="text-parchment/80">{almanac.yi}</span>
+                                </div>
+                                <div className="w-px h-8 bg-gold/10" />
+                                <div className="flex flex-col items-center gap-1">
+                                    <span className="text-ash/40 text-[10px] border border-ash/20 px-1 rounded">忌</span>
+                                    <span className="text-ash/80">{almanac.ji}</span>
+                                </div>
+                            </div>
+                            
+                            <div className="mt-3 flex flex-col items-center gap-1 opacity-60 hover:opacity-100 transition-opacity">
+                                <div className="text-[9px] text-gold/30 tracking-widest uppercase">
+                                    * 仅供娱乐 · 请勿模仿 *
+                                </div>
+                                <div className="text-[8px] text-gold/20 scale-90 text-center leading-tight font-serif">
+                                    本黄历内容纯属虚构，请勿在现实中尝试。<br/>
+                                    开发者不对任何因模仿而导致的后果负责。
+                                </div>
+                            </div>
+                        </div>
+                    </motion.div>
 
                     <motion.div 
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 1.0 }}
-                        className="mt-6 text-parchment/30 text-[10px] font-serif tracking-widest uppercase"
+                        className="mt-4 text-parchment/30 text-[10px] font-serif tracking-widest uppercase"
                     >
                         每日限抽一次 · 明日重置
                     </motion.div>
+                </div>
                 </div>
             </div>
           </motion.div>

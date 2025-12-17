@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Github, Sparkles, ExternalLink } from 'lucide-react';
+import { X, Github, Sparkles, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface MilestoneModalProps {
   isOpen: boolean;
@@ -8,6 +8,8 @@ interface MilestoneModalProps {
 }
 
 export const MilestoneModal: React.FC<MilestoneModalProps> = ({ isOpen, onClose }) => {
+  const [isHistoryExpanded, setIsHistoryExpanded] = useState(false);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -24,7 +26,7 @@ export const MilestoneModal: React.FC<MilestoneModalProps> = ({ isOpen, onClose 
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative w-full max-w-lg bg-onyx border border-gold/40 shadow-[0_0_50px_rgba(192,160,98,0.2)] p-6 md:p-8 rounded-sm text-center max-h-[85vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gold/20 scrollbar-track-transparent"
+            className="relative w-full max-w-lg bg-onyx border border-gold/40 shadow-[0_0_50px_rgba(192,160,98,0.2)] p-6 md:p-8 rounded-sm text-center max-h-[85vh] overflow-y-auto custom-scrollbar"
           >
             <button 
               onClick={onClose}
@@ -39,7 +41,7 @@ export const MilestoneModal: React.FC<MilestoneModalProps> = ({ isOpen, onClose 
                 </div>
             </div>
 
-            <h3 className="text-2xl text-gold font-heading mb-2 tracking-wider">35,000 次的相遇</h3>
+            <h3 className="text-2xl text-gold font-heading mb-2 tracking-wider">45,000 次的相遇</h3>
             
             <div className="h-px w-16 bg-gold/30 mx-auto my-4" />
 
@@ -52,13 +54,74 @@ export const MilestoneModal: React.FC<MilestoneModalProps> = ({ isOpen, onClose 
                 </p>
                 
                 <div className="bg-black/20 p-4 rounded border border-gold/10 my-4">
-                  <h4 className="text-gold font-bold mb-2 text-center">本次更新内容</h4>
+                  <h4 className="text-gold font-bold mb-2 text-center flex items-center justify-center gap-2">
+                    <Sparkles size={14} />
+                    本次更新：今日司辰
+                    <Sparkles size={14} />
+                  </h4>
+                  <p className="text-xs text-parchment/70 mb-3 text-center">
+                    “时间是最大的秘密，而我们皆是时间的囚徒。”
+                  </p>
                   <ul className="list-disc pl-5 space-y-2 text-xs text-parchment/70">
-                    <li>新增了 Wiki 的快速跳转按钮和相性的详细解释。</li>
-                    <li>新增了对《司辰之书》中额外的五个相性的适配。</li>
-                    <li>对问题和结果的判别进行了调整和优化。</li>
-                    <li>因为算法更新，推荐大家重新测试，结果会更准确有趣。</li>
+                    <li>
+                        <span className="text-gold/80 font-bold">每日运势：</span>
+                        每天抽取一位守护你的司辰，获取今日的启示与箴言。
+                    </li>
+                    <li>
+                        <span className="text-gold/80 font-bold">密教黄历：</span>
+                        基于真实天象与密教世界观重构的历法。包含拉丁文日期、星象位置以及每日宜忌。
+                    </li>
+                    <li>
+                        <span className="text-gold/80 font-bold">彩蛋机制：</span>
+                        如果你连续两天抽到同一位司辰，或许会有特别的事情发生......
+                    </li>
                   </ul>
+                  <div className="mt-3 text-center">
+                    <p className="text-[10px] text-gold/40 italic">
+                        * 点击主界面右上角的“今日司辰”按钮即可体验 *
+                    </p>
+                  </div>
+                </div>
+
+                {/* 历史更新记录 (可展开) */}
+                <div className="border-t border-gold/10 pt-2">
+                    <button 
+                        onClick={() => setIsHistoryExpanded(!isHistoryExpanded)}
+                        className="flex items-center justify-center gap-2 w-full py-2 text-gold/40 hover:text-gold/60 transition-colors text-xs uppercase tracking-widest"
+                    >
+                        {isHistoryExpanded ? '收起历史记录' : '查看往期更新'}
+                        {isHistoryExpanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                    </button>
+                    
+                    <AnimatePresence>
+                        {isHistoryExpanded && (
+                            <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                className="overflow-hidden"
+                            >
+                                <div className="bg-black/10 p-4 rounded border border-gold/5 mt-2 space-y-4">
+                                    <div>
+                                        <h5 className="text-gold/60 text-xs font-bold mb-1">35,000 访客里程碑</h5>
+                                        <ul className="list-disc pl-4 space-y-1 text-[10px] text-parchment/50">
+                                            <li>新增 Wiki 快速跳转按钮和相性详细解释。</li>
+                                            <li>新增《司辰之书》额外五个相性的适配。</li>
+                                            <li>优化问题和结果的判别算法。</li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h5 className="text-gold/60 text-xs font-bold mb-1">早期更新</h5>
+                                        <ul className="list-disc pl-4 space-y-1 text-[10px] text-parchment/50">
+                                            <li>实装“现实模式”与“故事模式”。</li>
+                                            <li>增加背景音乐与音效系统。</li>
+                                            <li>优化移动端适配与视觉效果。</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
                 <p className="text-center text-gold/60 italic pt-2 pb-2 border-t border-b border-gold/10 my-4">
