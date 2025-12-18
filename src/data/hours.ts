@@ -266,7 +266,7 @@ export const HOURS_DATA: Hour[] = [
   },
   {
     id: 'XXV',
-    name: '戴冠之孽 (The Crowned Growth)',
+    name: '戴冠之孳 (The Crowned Growth)',
     origin: '虚源',
     aspects: ['Grail', 'Winter'],
     gender: '阳性',
@@ -328,7 +328,7 @@ export const HOURS_DATA: Hour[] = [
     id: 'XXXVI',
     name: '转轮 (The Wheel)',
     origin: '石源',
-    aspects: ['Heart', 'Scale', 'Nectar'],
+    aspects: ['Heart', 'Moth', 'Nectar'],
     gender: '阳性',
     image: BASE_URL + 'images/hours/450px-36转轮（RoAshe）.webp',
     desc: '时间不是直线，而是碾碎一切的轮盘。曾经发生的必将再次发生，无法逃避，无法停止。',
